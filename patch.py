@@ -17,11 +17,8 @@ import os, subprocess, tempfile, time, shutil, sys
 #    chosen_one = devices[int(id)-1]
 #else:
 #    chosen_one = devices[0]
-
 #print(" *** Selected device " + chosen_one)
-
 #print(" *** Device detected! proceeding...")
-
 # pull framework somewhere temporary
 curdir = os.getcwd()
 dirpath = tempfile.mkdtemp()
