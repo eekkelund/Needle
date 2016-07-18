@@ -2,39 +2,40 @@
 import os, subprocess, tempfile, time, shutil, sys
 
 # ensure binaries are present
-devices = subprocess.check_output(["adb", "devices"]).decode("utf-8")
+#devices = subprocess.check_output(["adb", "devices"]).decode("utf-8")
 
-if devices.count('\n') <= 2:
-    print(" *** Please connect your device first.")
-    sys.exit(0)
+#if devices.count('\n') <= 2:
+ #   print(" *** Please connect your device first.")
+ #   sys.exit(0)
 
-devices = devices.split('\n')[1:-2]
-devices = [a.split("\t")[0] for a in devices]
+#devices = devices.split('\n')[1:-2]
+#devices = [a.split("\t")[0] for a in devices]
 
-if len(devices) > 1:
-    print("Enter id of device to target:")
-    id = input("\n\t".join([str(i)+" - "+a for i,a in zip(range(1, len(devices)+1), devices)]) + "\n\n> ")
-    chosen_one = devices[int(id)-1]
-else:
-    chosen_one = devices[0]
+#if len(devices) > 1:
+#    print("Enter id of device to target:")
+#    id = input("\n\t".join([str(i)+" - "+a for i,a in zip(range(1, len(devices)+1), devices)]) + "\n\n> ")
+#    chosen_one = devices[int(id)-1]
+#else:
+#    chosen_one = devices[0]
 
-print(" *** Selected device " + chosen_one)
+#print(" *** Selected device " + chosen_one)
 
-print(" *** Device detected! proceeding...")
+#print(" *** Device detected! proceeding...")
 
 # pull framework somewhere temporary
 curdir = os.getcwd()
 dirpath = tempfile.mkdtemp()
-os.chdir(dirpath)
-print(" *** Working dir: %s" % dirpath)
+os.chdir(curdir)
+print(" *** Working dir: %s" % curdir)
+#print(subprocess.call(["ls"]))
 
-print(" *** Rooting adbd...")
-subprocess.call(["adb", "-s", chosen_one, "root"])
-subprocess.call(["adb", "-s", chosen_one, "wait-for-device"])
-subprocess.call(["adb", "-s", chosen_one, "remount", "/system"])
+#print(" *** Rooting adbd...")
+#subprocess.call(["adb", "-s", chosen_one, "root"])
+#subprocess.call(["adb", "-s", chosen_one, "wait-for-device"])
+#subprocess.call(["adb", "-s", chosen_one, "remount", "/system"])
 
-print(" *** Pulling framework from device...")
-subprocess.check_output(["adb", "-s", chosen_one, "pull", "/system/framework/framework.jar", "."])
+#print(" *** Pulling framework from device...")
+#subprocess.check_output(["adb", "-s", chosen_one, "pull", "/system/framework/framework.jar", "."])
 
 # disassemble it
 print(" *** Disassembling framework...")
@@ -73,6 +74,8 @@ while i < len(old_contents):
     if ".method public static generatePackageInfo(Landroid/content/pm/PackageParser$Package;[IIJJLandroid/util/ArraySet;Landroid/content/pm/PackageUserState;I)Landroid/content/pm/PackageInfo;" in old_contents[i]:
         in_function = True
     if ".method public static generatePackageInfo(Landroid/content/pm/PackageParser$Package;[IIJJLjava/util/HashSet;Landroid/content/pm/PackageUserState;I)Landroid/content/pm/PackageInfo;" in old_contents[i]:
+        in_function = True
+    if ".method public static generatePackageInfo(Landroid/content/pm/PackageParser$Package;[IIJJLjava/util/HashSet;ZII)Landroid/content/pm/PackageInfo;" in old_contents[i]:
         in_function = True
     if ".end method" in old_contents[i]:
         in_function = False
@@ -115,8 +118,8 @@ subprocess.call(["zip", "-r", "../../../framework.jar", "classes.dex"])
 os.chdir("../../..")
 
 # push to device
-print(" *** Pushing changes to device...")
-subprocess.check_output(["adb", "-s", chosen_one, "push", "framework.jar", "/system/framework/framework.jar"])
+#print(" *** Pushing changes to device...")
+#subprocess.check_output(["adb", "-s", chosen_one, "push", "framework.jar", "/system/framework/framework.jar"])
 
 print(" *** All done! :)")
 
